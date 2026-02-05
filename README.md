@@ -112,7 +112,8 @@ Reading RGB: WMTS:https://services.arcgisonline.com/arcgis/rest/services/World_I
 - **Screenshot/export** — dump framebuffer to PNG or mesh to OBJ/PLY
 - **Multiple RGB source toggle** — T cycling through a list of sources rather than just texture/colormap
 - **Mesh resolution bump** — 256x256 or 512x512, overview selection handles it automatically
-
+- **GTI catalog for Copernicus SRTM** - use GDAL GTI setup for the global SRTM dems, should be faster than dynamic VRT of local tiles (indexed globally)
+- 
 ### Quick wins
 - **Title bar info** — show CRS, bbox, mesh res, z-exag in the window title
 - **Bbox from click** — right-click to print world coordinates of a mesh point
