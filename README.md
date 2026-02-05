@@ -102,6 +102,8 @@ Reading RGB: WMTS:https://services.arcgisonline.com/arcgis/rest/services/World_I
   Z exaggeration: 0.6x
 ```
 
+![kunanyi terrain in cog mesh view](./kunanyi_cog-mesh-view.png)
+
 ---
 
 ## Short-term improvements
