@@ -50,7 +50,7 @@ python cog_mesh_viewer.py --rgb none  # elevation colormap only
 python cog_mesh_viewer.py --nx 256 --ny 256 --zscale 0.001
 ```
 
-Any GDAL DSN works for `--dem` and `--rgb`: local files, `/vsicurl/`, `/vsis3/`, WMTS, VRT, etc.
+Any GDAL DSN works for `--dem` and `--rgb`: local files, `/vsicurl/`, `/vsis3/`, WMTS, VRT, etc. Use `vrt://{dsn}?expand=rgb` for pallete images, and for any other available vrt syntax.
 
 ### Key design decisions
 - **No raster warping** — sources are read in their native CRS at native pixel alignment. Only bbox corners are transformed. The GPU handles the texture-to-mesh mapping via UV coordinates and barycentric interpolation.
