@@ -1,4 +1,3 @@
-
 """
 COG Mesh Viewer
 ===============
@@ -91,8 +90,14 @@ def get_cog_crs(path):
     return sr
 
 
-def transform_bbox(bbox, src_crs_str, dst_crs_str):
-    """Transform [xmin, ymin, xmax, ymax] between CRS strings."""
+def transform_bbox(bbox, src_crs_str, dst_crs_str, n_edge=20):
+    """
+    Transform [xmin, ymin, xmax, ymax] between CRS strings.
+    
+    Samples points along all 4 edges to handle curved projections correctly
+    (polar, antimeridian, any projection with significant curvature).
+    Returns the bounding box of all transformed points.
+    """
     src_sr = osr.SpatialReference()
     src_sr.SetFromUserInput(src_crs_str)
     src_sr.SetAxisMappingStrategy(osr.OAMS_TRADITIONAL_GIS_ORDER)
@@ -100,9 +105,36 @@ def transform_bbox(bbox, src_crs_str, dst_crs_str):
     dst_sr.SetFromUserInput(dst_crs_str)
     dst_sr.SetAxisMappingStrategy(osr.OAMS_TRADITIONAL_GIS_ORDER)
     tr = osr.CoordinateTransformation(src_sr, dst_sr)
-    ll = tr.TransformPoint(bbox[0], bbox[1])
-    ur = tr.TransformPoint(bbox[2], bbox[3])
-    return [ll[0], ll[1], ur[0], ur[1]]
+    
+    # Sample points along all 4 edges
+    xs = np.concatenate([
+        np.linspace(bbox[0], bbox[2], n_edge),  # bottom edge
+        np.linspace(bbox[0], bbox[2], n_edge),  # top edge
+        np.full(n_edge, bbox[0]),                # left edge
+        np.full(n_edge, bbox[2]),                # right edge
+    ])
+    ys = np.concatenate([
+        np.full(n_edge, bbox[1]),                # bottom edge
+        np.full(n_edge, bbox[3]),                # top edge
+        np.linspace(bbox[1], bbox[3], n_edge),  # left edge
+        np.linspace(bbox[1], bbox[3], n_edge),  # right edge
+    ])
+    
+    # Transform all points, filtering out any that fail (inf/nan)
+    txs, tys = [], []
+    for x, y in zip(xs, ys):
+        try:
+            pt = tr.TransformPoint(x, y)
+            if math.isfinite(pt[0]) and math.isfinite(pt[1]):
+                txs.append(pt[0])
+                tys.append(pt[1])
+        except:
+            pass
+    
+    if not txs or not tys:
+        raise RuntimeError(f"No valid points after transforming bbox from {src_crs_str} to {dst_crs_str}")
+    
+    return [min(txs), min(tys), max(txs), max(tys)]
 
 
 def read_cog_bbox(path, bbox_native, width, height, bands=None):
