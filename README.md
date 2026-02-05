@@ -199,4 +199,8 @@ cog_mesh_viewer/
   shaders.py       # GLSL sources
 ```
 
-The key invariant to preserve: **data is always read in the source's native CRS and pixel grid**. The mesh defines the coordinate space, texcoords define the mapping, the GPU does the interpolation. No raster warping here (but that does also work well and probably for inherently target-tiled canvas i.e. [https://github.com/mdsumner/plumber-gdal-api/](plumber-gdal-api)).
+The key invariant to preserve: **data is always read in the source's native CRS and pixel grid**. The mesh defines the coordinate space, texcoords define the mapping, the GPU does the interpolation. No raster warping here (but that does also work well and probably for inherently target-tiled canvas i.e. [plumber-gdal-api](https://github.com/mdsumner/plumber-gdal-api/)).
+
+Similar and much more production ready work like this in [deck.gl-raster](https://github.com/developmentseed/deck.gl-raster/), and older rgl approach to mesh mapping in [anglr](https://github.com/hypertidy/anglr/) and a to-be-updated [textures](https://github.com/hypertidy/textures/). Know of more examples, let us know please!  Teture mapping is an obvious technique but does the transfer through coordinate systems occur in many places? (An old commercial software Eonfusion did this heavily in the DirectX era). 
+
+
